@@ -1,0 +1,17 @@
+FUNCTION aggregate_voting_statistics(election_id, filter_params):
+    WHERE_clause = build_filter_clause(filter_params)
+    
+    turnout_stats = QUERY votes JOIN demographics 
+        GROUP BY faculty, year_level
+        CALCULATE percentage of eligible voters
+    
+    preference_dist = QUERY votes WHERE preference_rank = 1
+        GROUP BY candidate_id
+        CALCULATE vote counts and percentages
+    
+    temporal_patterns = QUERY votes 
+        BUCKET by hour using TimescaleDB
+        COUNT votes per time period
+    
+    RETURN aggregated statistics
+END FUNCTION
