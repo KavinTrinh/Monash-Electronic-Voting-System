@@ -1,0 +1,20 @@
+┌─────────────────────────────────────────────────────────────┐
+│               CLIENT: React Frontend                         │
+│    Voter Interface | Admin Dashboard | Real-time Analytics  │
+└────────────────┬────────────────────────────────────────────┘
+                 │ HTTPS / WebSocket
+                 ▼
+┌─────────────────────────────────────────────────────────────┐
+│        BACKEND: FastAPI (REST + WebSocket)                   │
+│  Identity Service | Voting Service | Analytics Service      │
+└─┬─────────────┬─────────────┬──────────────┬───────────────┘
+  │             │             │              │
+  ▼             ▼             ▼              ▼
+┌──────────┐ ┌───────────┐ ┌──────────┐ ┌────────────────┐
+│Identity  │ │ Voting DB │ │ Redis    │ │ AWS QLDB       │
+│Database  │ │(Postgres+ │ │ Cache    │ │(Audit Log)     │
+│          │ │Timescale) │ │          │ │                │
+└──────────┘ └───────────┘ └──────────┘ └────────────────┘
+                 
+INFRASTRUCTURE: Docker on AWS ECS Fargate + RDS + S3
+MONITORING: Grafana + Prometheus
