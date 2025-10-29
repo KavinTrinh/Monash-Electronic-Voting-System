@@ -1,0 +1,15 @@
+FUNCTION generate_anonymous_token(user_email, election_id):
+    IF check_token_issued(user_email, election_id):
+        RAISE Error("Token already issued")
+    
+    random_bytes = libsodium.randombytes(32)
+    token_id = base64url_encode(random_bytes)
+    payload = {token_id, election_id, issued_at, expires_at, type}
+    signed_token = jwt.encode(payload, SECRET_KEY, HS256)
+    
+    token_hash = libsodium.crypto_generichash(token_id)
+    store_token_hash(token_hash, election_id)
+    mark_token_issued(user_email, election_id)
+    
+    RETURN signed_token
+END FUNCTION
