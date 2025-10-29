@@ -1,0 +1,50 @@
+FUNCTION instant_runoff_voting(ballots, candidates):
+    active_candidates = candidates.copy()
+    round_number = 1
+    
+    WHILE TRUE:
+        // Count first preferences for active candidates
+        vote_counts = {}
+        FOR each candidate IN active_candidates:
+            vote_counts[candidate] = 0
+        
+        FOR each ballot IN ballots:
+            // Find highest-ranked active candidate on this ballot
+            FOR each preference IN ballot.ranked_preferences:
+                IF preference IN active_candidates:
+                    vote_counts[preference] += 1
+                    BREAK
+        
+        total_votes = SUM(vote_counts.values())
+        majority_threshold = total_votes / 2
+        
+        // Check for majority winner
+        FOR each candidate, count IN vote_counts:
+            IF count > majority_threshold:
+                RETURN {
+                    winner: candidate,
+                    final_count: count,
+                    rounds: round_number
+                }
+        
+        // Eliminate candidate with fewest votes
+        min_votes = MIN(vote_counts.values())
+        eliminated_candidate = FIND candidate WHERE vote_counts[candidate] == min_votes
+        
+        // Handle tie for last place
+        IF COUNT(candidates with min_votes) > 1:
+            eliminated_candidate = RESOLVE_TIE(candidates_with_min_votes)
+        
+        REMOVE eliminated_candidate FROM active_candidates
+        LOG elimination_round(round_number, eliminated_candidate, vote_counts)
+        
+        round_number += 1
+        
+        // If only one candidate remains, they win
+        IF LENGTH(active_candidates) == 1:
+            RETURN {
+                winner: active_candidates[0],
+                final_count: total_votes,
+                rounds: round_number
+            }
+END FUNCTION
